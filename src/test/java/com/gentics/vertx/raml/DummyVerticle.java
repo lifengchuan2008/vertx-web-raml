@@ -25,7 +25,6 @@ public class DummyVerticle extends AbstractRAMLVerticle {
 		readOne.handler(rc -> {
 			rc.response().end(getUserResponse().toString());
 		});
-
 	}
 
 	private JsonObject getUserResponse() {

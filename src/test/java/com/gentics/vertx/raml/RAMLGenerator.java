@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 
 public class RAMLGenerator {
 
@@ -73,7 +74,12 @@ public class RAMLGenerator {
 				response.setBody(map);
 
 				MimeType mimeType = new MimeType();
-				String json = toJson(entry.getValue());
+				String json = null;
+				if (entry.getValue() instanceof JsonObject) {
+					json = entry.getValue().toString();
+				} else {
+					json = toJson(entry.getValue());
+				}
 				mimeType.setExample(json);
 				map.put("application/json", mimeType);
 				String key = String.valueOf(entry.getKey());
@@ -100,7 +106,8 @@ public class RAMLGenerator {
 
 			String path = endpoint.getRamlPath();
 			if (path == null) {
-				throw new RuntimeException("Could not determine path for endpoint of verticle " + verticle.getClass() + " " + endpoint.getPathRegex());
+				throw new RuntimeException(
+						"Could not determine path for endpoint of verticle " + verticle.getClass() + " " + endpoint.getPathRegex());
 			}
 			Resource pathResource = verticleResource.getResources().get(path);
 			if (pathResource == null) {
