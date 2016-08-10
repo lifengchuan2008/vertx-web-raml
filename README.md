@@ -51,12 +51,5 @@ mediaType: application/json
                 "200": 
                     body: 
                         application/json: 
-                            example: |
-                                {
-                                  "map" : {
-                                    "name" : "someUsername"
-                                  },
-                                  "empty" : false
-                                }
-
+                             example: '{"name":"someUsername"}'
 ```
