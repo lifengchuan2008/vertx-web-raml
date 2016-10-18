@@ -4,17 +4,18 @@ Prove of concept for RAML Generation using Vert.x
 The following endpoint/route:
 
 ```
-	Endpoint readOne = createEndpoint();
-		readOne.path("/:userUuid");
-		readOne.description("Read the user with the given uuid");
-		readOne.addUriParameter("userUuid", "Uuid of the user.", "2f2de9297c8143e8ade9297c8193e8fc");
-		readOne.method(GET);
-		readOne.produces("application/json");
-		readOne.exampleResponse(200, getUserResponse());
-		readOne.addQueryParameters(DummyParameter.class);
-		readOne.handler(rc -> {
-			rc.response().end(getUserResponse().toString());
-		});
+    RestRouter restRouter = RestRouter.router(vertx);
+    RestRoute readOne = restRouter.route();
+        readOne.path("/:userUuid");
+        readOne.description("Read the user with the given uuid");
+        readOne.uriParameter("userUuid", "Uuid of the user.", "2f2de9297c8143e8ade9297c8193e8fc");
+        readOne.method(GET);
+        readOne.produces("application/json");
+        readOne.exampleResponse(200, getUserResponse());
+        readOne.queryParameters(DummyParameter.class);
+        readOne.handler(rc -> {
+            rc.response().end(getUserResponse().toString());
+        });
 ```
 
 is transformed into:
