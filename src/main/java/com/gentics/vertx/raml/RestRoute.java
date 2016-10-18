@@ -90,7 +90,4 @@ public interface RestRoute extends Route {
 	 */
 	void validate();
 
-	// TODO move to Route
-	int order();
-
 }
