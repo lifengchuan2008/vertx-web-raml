@@ -21,7 +21,6 @@ import org.raml.model.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 
@@ -55,20 +54,20 @@ public class RAMLGenerator {
 		System.out.println(dumpFromRaml);
 	}
 
-	private void addEndpoints(String basePath, Map<String, Resource> resources, RAMLVerticle verticle) throws IOException {
+	private void addEndpoints(Map<String, Resource> resources, RestRouter router) throws IOException {
 
 		Resource verticleResource = new Resource();
-		for (Endpoint endpoint : verticle.getEndpoints()) {
+		for (RestRoute route : router.getRestRoutes()) {
 
-			String fullPath = "api/v1" + basePath + "/" + verticle.getBasePath() + endpoint.getRamlPath();
+			String fullPath = "/" + route.ramlPath();
 			Action action = new Action();
-			action.setIs(Arrays.asList(endpoint.getTraits()));
-			action.setDisplayName(endpoint.getDisplayName());
-			action.setDescription(endpoint.getDescription());
-			action.setQueryParameters(endpoint.getQueryParameters());
+			action.setIs(Arrays.asList(route.getTraits()));
+			action.setDisplayName(route.displayName());
+			action.setDescription(route.description());
+			action.setQueryParameters(route.queryParameters());
 
 			// Add response examples
-			for (Entry<Integer, Object> entry : endpoint.getExampleResponses().entrySet()) {
+			for (Entry<Integer, Object> entry : route.exampleResponses().entrySet()) {
 				Response response = new Response();
 				HashMap<String, MimeType> map = new HashMap<>();
 				response.setBody(map);
@@ -85,46 +84,46 @@ public class RAMLGenerator {
 				String key = String.valueOf(entry.getKey());
 				action.getResponses().put(key, response);
 
-				//write example response to dedicated file
-				String filename = "response/" + fullPath + "/" + key + "/" + entry.getValue().getClass().getSimpleName() + ".json";
-				writeJson(filename, json);
+				// write example response to dedicated file
+				if (entry.getValue() != null) {
+					String filename = "response/" + fullPath + "/" + key + "/" + entry.getValue().getClass().getSimpleName() + ".json";
+					writeJson(filename, json);
+				}
 			}
 
 			// Add request example
-			if (endpoint.getExampleRequest() != null) {
+			if (route.exampleRequest() != null) {
 				HashMap<String, MimeType> bodyMap = new HashMap<>();
 				MimeType mimeType = new MimeType();
-				String json = toJson(endpoint.getExampleRequest());
+				String json = toJson(route.exampleRequest());
 				mimeType.setExample(json);
 				bodyMap.put("application/json", mimeType);
 				action.setBody(bodyMap);
 
-				//write example request to dedicated file
-				String filename = "request/" + fullPath + "/" + endpoint.getExampleRequest().getClass().getSimpleName() + ".json";
+				// write example request to dedicated file
+				String filename = "request/" + fullPath + "/" + route.exampleRequest().getClass().getSimpleName() + ".json";
 				writeJson(filename, json);
 			}
 
-			String path = endpoint.getRamlPath();
+			String path = route.ramlPath();
 			if (path == null) {
-				throw new RuntimeException(
-						"Could not determine path for endpoint of verticle " + verticle.getClass() + " " + endpoint.getPathRegex());
+				throw new RuntimeException("Could not determine path for route of router " + router.getClass() + " " + route.pathRegex());
 			}
 			Resource pathResource = verticleResource.getResources().get(path);
 			if (pathResource == null) {
 				pathResource = new Resource();
 			}
-			if (endpoint.getMethod() == null) {
+			if (route.methods().iterator().next() == null) {
 				continue;
 			}
-			pathResource.getActions().put(getActionType(endpoint.getMethod()), action);
-			pathResource.setUriParameters(endpoint.getUriParameters());
+			pathResource.getActions().put(getActionType(route.methods().iterator().next()), action);
+			pathResource.setUriParameters(route.uriParameters());
 			verticleResource.getResources().put(path, pathResource);
-
+			verticleResource.setDisplayName("/" + route.displayName());
+			verticleResource.setDescription(route.description());
+			// action.setBaseUriParameters(route.uriParameters());
+			resources.put("/", verticleResource);
 		}
-		verticleResource.setDisplayName(basePath + "/" + verticle.getBasePath());
-		verticleResource.setDescription(verticle.getDescription());
-		//action.setBaseUriParameters(endpoint.getUriParameters());
-		resources.put(basePath + "/" + verticle.getBasePath(), verticleResource);
 
 	}
 
@@ -146,16 +145,10 @@ public class RAMLGenerator {
 		return ActionType.valueOf(method.name());
 	}
 
-	private void initVerticle(AbstractVerticle verticle) throws Exception {
-		//Mockito.when(verticle.getRouter()).thenReturn(Router.router(Vertx.vertx()));
-		verticle.start();
-	}
-
 	private void addCoreVerticles(Map<String, Resource> resources) throws Exception {
-		String coreBasePath = "";
 		DummyVerticle userVerticle = Mockito.spy(new DummyVerticle());
-		initVerticle(userVerticle);
-		addEndpoints(coreBasePath, resources, userVerticle);
-
+		userVerticle.start();
+		RestRouter restRouter = userVerticle.getRestRouter();
+		addEndpoints(resources, restRouter);
 	}
 }
