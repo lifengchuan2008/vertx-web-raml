@@ -21,6 +21,16 @@ public class RestRouterImpl implements RestRouter {
 
 	private Router router;
 
+	private String title;
+
+	private String description;
+
+	private String baseUri;
+
+	private String version;
+
+	private String[] protocols;
+
 	private final Set<RestRouteImpl> routes = new ConcurrentSkipListSet<>(RouterImpl.routeComparator);
 
 	public RestRouterImpl(Router router) {
@@ -238,5 +248,60 @@ public class RestRouterImpl implements RestRouter {
 	@Override
 	public void handleFailure(RoutingContext context) {
 		router.handleFailure(context);
+	}
+
+	@Override
+	public String baseUri() {
+		return baseUri;
+	}
+
+	@Override
+	public RestRouter baseUri(String baseUri) {
+		this.baseUri = baseUri;
+		return this;
+	}
+
+	@Override
+	public String[] protocols() {
+		return protocols;
+	}
+
+	@Override
+	public RestRouter protocols(String... protocols) {
+		this.protocols = protocols;
+		return this;
+	}
+
+	@Override
+	public String title() {
+		return title;
+	}
+
+	@Override
+	public RestRouter title(String title) {
+		this.title = title;
+		return this;
+	}
+
+	@Override
+	public String version() {
+		return version;
+	}
+
+	@Override
+	public RestRouter version(String version) {
+		this.version = version;
+		return this;
+	}
+
+	@Override
+	public String description() {
+		return description;
+	}
+
+	@Override
+	public RestRouter description(String description) {
+		this.description = description;
+		return this;
 	}
 }

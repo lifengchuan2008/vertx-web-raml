@@ -1,14 +1,11 @@
 package com.gentics.vertx.raml;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
-import org.mockito.Mockito;
 import org.raml.emitter.RamlEmitter;
 import org.raml.model.Action;
 import org.raml.model.ActionType;
@@ -26,35 +23,34 @@ import io.vertx.core.json.JsonObject;
 
 public class RAMLGenerator {
 
-	private Raml raml = new Raml();
+	// private static File outputFolder = new File("target", "api");
+	//
+	// public static void main(String[] args) throws Exception {
+	// if (outputFolder.exists()) {
+	// FileUtils.deleteDirectory(outputFolder);
+	// }
+	// new RAMLGenerator().generator();
+	// }
 
-	private static File outputFolder = new File("target", "api");
+	public static String generate(RestRouter restRouter) throws Exception {
 
-	public static void main(String[] args) throws Exception {
-		if (outputFolder.exists()) {
-			FileUtils.deleteDirectory(outputFolder);
-		}
-		new RAMLGenerator().generator();
-	}
-
-	public void generator() throws Exception {
-
-		raml.setTitle("Dummy REST API");
-		raml.setVersion("1");
-		raml.setBaseUri("http://localhost:8080/api/v1");
+		Raml raml = new Raml();
+		raml.setTitle(restRouter.title());
+		raml.setVersion(restRouter.version());
+		raml.setBaseUri(restRouter.baseUri());
+		// TODO handle protocol
 		raml.getProtocols().add(Protocol.HTTP);
 		raml.getProtocols().add(Protocol.HTTPS);
+		// TODO handle default media type or omit it
 		raml.setMediaType("application/json");
 
-		addCoreVerticles(raml.getResources());
+		addEndpoints(raml.getResources(), restRouter);
 
 		RamlEmitter emitter = new RamlEmitter();
-		String dumpFromRaml = emitter.dump(raml);
-		writeJson("api.raml", dumpFromRaml);
-		System.out.println(dumpFromRaml);
+		return emitter.dump(raml);
 	}
 
-	private void addEndpoints(Map<String, Resource> resources, RestRouter router) throws IOException {
+	private static void addEndpoints(Map<String, Resource> resources, RestRouter router) throws IOException {
 
 		Resource verticleResource = new Resource();
 		for (RestRoute route : router.getRestRoutes()) {
@@ -86,8 +82,8 @@ public class RAMLGenerator {
 
 				// write example response to dedicated file
 				if (entry.getValue() != null) {
-					String filename = "response/" + fullPath + "/" + key + "/" + entry.getValue().getClass().getSimpleName() + ".json";
-					writeJson(filename, json);
+					// String filename = "response/" + fullPath + "/" + key + "/" + entry.getValue().getClass().getSimpleName() + ".json";
+					// writeJson(filename, json);
 				}
 			}
 
@@ -101,8 +97,8 @@ public class RAMLGenerator {
 				action.setBody(bodyMap);
 
 				// write example request to dedicated file
-				String filename = "request/" + fullPath + "/" + route.exampleRequest().getClass().getSimpleName() + ".json";
-				writeJson(filename, json);
+				// String filename = "request/" + fullPath + "/" + route.exampleRequest().getClass().getSimpleName() + ".json";
+				// writeJson(filename, json);
 			}
 
 			String path = route.ramlPath();
@@ -127,13 +123,13 @@ public class RAMLGenerator {
 
 	}
 
-	private String toJson(Object value) throws JsonProcessingException {
+	private static String toJson(Object value) throws JsonProcessingException {
 		return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
 	}
 
-	private void writeJson(String filename, String json) throws IOException {
-		FileUtils.writeStringToFile(new File(outputFolder, filename), json);
-	}
+	// private void writeJson(String filename, String json) throws IOException {
+	// FileUtils.writeStringToFile(new File(outputFolder, filename), json);
+	// }
 
 	/**
 	 * Convert the http method to a RAML action type.
@@ -141,14 +137,14 @@ public class RAMLGenerator {
 	 * @param method
 	 * @return
 	 */
-	private ActionType getActionType(HttpMethod method) {
+	private static ActionType getActionType(HttpMethod method) {
 		return ActionType.valueOf(method.name());
 	}
 
-	private void addCoreVerticles(Map<String, Resource> resources) throws Exception {
-		DummyVerticle userVerticle = Mockito.spy(new DummyVerticle());
-		userVerticle.start();
-		RestRouter restRouter = userVerticle.getRestRouter();
-		addEndpoints(resources, restRouter);
-	}
+	// private void addCoreVerticles(Map<String, Resource> resources) throws Exception {
+	// DummyVerticle userVerticle = Mockito.spy(new DummyVerticle());
+	// userVerticle.start();
+	// RestRouter restRouter = userVerticle.getRestRouter();
+	// addEndpoints(resources, restRouter);
+	// }
 }

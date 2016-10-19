@@ -127,4 +127,24 @@ public interface RestRouter extends Router {
 	@Override
 	RestRouter exceptionHandler(Handler<Throwable> exceptionHandler);
 
+	String title();
+
+	RestRouter title(String title);
+
+	String version();
+
+	RestRouter version(String version);
+
+	String baseUri();
+
+	RestRouter baseUri(String uri);
+
+	String[] protocols();
+
+	RestRouter protocols(String... protocols);
+
+	String description();
+
+	RestRouter description(String description);
+
 }

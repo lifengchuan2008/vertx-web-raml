@@ -5,7 +5,10 @@ import java.util.Map;
 import org.raml.model.parameter.QueryParameter;
 import org.raml.model.parameter.UriParameter;
 
+import io.vertx.core.Handler;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
+import io.vertx.ext.web.RoutingContext;
 
 public interface RestRoute extends Route {
 
@@ -89,5 +92,14 @@ public interface RestRoute extends Route {
 	 * Validate that all mandatory fields have been set.
 	 */
 	void validate();
+
+	@Override
+	RestRoute path(String path);
+
+	@Override
+	RestRoute method(HttpMethod method);
+
+	@Override
+	RestRoute handler(Handler<RoutingContext> requestHandler);
 
 }
