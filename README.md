@@ -26,6 +26,7 @@ is transformed via:
 
 into:
 
+```
 #%RAML 0.8
 title: Dummy REST API
 version: "1"
