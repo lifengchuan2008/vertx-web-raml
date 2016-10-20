@@ -30,7 +30,7 @@ into:
 #%RAML 0.8
 title: Dummy REST API
 version: "1"
-baseUri: "http://localhost:8080/api/v1"
+baseUri: "http://localhost:8080/"
 protocols: [HTTP, HTTPS]
 mediaType: application/json
 /dummy: 
