@@ -19,6 +19,9 @@ import io.vertx.ext.web.impl.RouterImpl;
 
 public class RestRouterImpl implements RestRouter {
 
+	/**
+	 * Wrapped router
+	 */
 	private Router router;
 
 	private String title;
@@ -31,7 +34,7 @@ public class RestRouterImpl implements RestRouter {
 
 	private String[] protocols;
 
-	private final Set<RestRouteImpl> routes = new ConcurrentSkipListSet<>(RouterImpl.routeComparator);
+	private final Set<RestRoute> routes = new ConcurrentSkipListSet<>(RouterImpl.routeComparator);
 
 	public RestRouterImpl(Router router) {
 		this.router = router;
@@ -43,188 +46,252 @@ public class RestRouterImpl implements RestRouter {
 	}
 
 	@Override
-	public RestRouteImpl route() {
-		RestRouteImpl route = new RestRouteImpl(router.route());
+	public RestRoute route() {
+		RestRoute route = new RestRouteImpl(router.route(), this);
 		routes.add(route);
 		return route;
 	}
 
 	@Override
-	public RestRouteImpl route(HttpMethod method, String path) {
-		return new RestRouteImpl(router.route(method, path));
-	}
-
-	@Override
-	public RestRouteImpl route(String path) {
-		RestRouteImpl route = new RestRouteImpl(router.route(path));
+	public RestRoute route(HttpMethod method, String path) {
+		RestRoute route = new RestRouteImpl(router.route(method, path), this);
 		routes.add(route);
 		return route;
 	}
 
 	@Override
-	public RestRouteImpl routeWithRegex(HttpMethod method, String regex) {
-		return new RestRouteImpl(router.routeWithRegex(method, regex));
+	public RestRoute route(String path) {
+		RestRoute route = new RestRouteImpl(router.route(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl routeWithRegex(String regex) {
-		return new RestRouteImpl(router.routeWithRegex(regex));
+	public RestRoute routeWithRegex(HttpMethod method, String regex) {
+		RestRoute route = new RestRouteImpl(router.routeWithRegex(method, regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl get() {
-		return new RestRouteImpl(router.get());
+	public RestRoute routeWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.routeWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl get(String path) {
-		return new RestRouteImpl(router.get());
+	public RestRoute get() {
+		RestRoute route = new RestRouteImpl(router.get(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl getWithRegex(String regex) {
-		return new RestRouteImpl(router.getWithRegex(regex));
+	public RestRoute get(String path) {
+		RestRoute route = new RestRouteImpl(router.get(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl head() {
-		return new RestRouteImpl(router.head());
+	public RestRoute getWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.getWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl head(String path) {
-		return new RestRouteImpl(router.head(path));
+	public RestRoute head() {
+		RestRoute route = new RestRouteImpl(router.head(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl headWithRegex(String regex) {
-		return new RestRouteImpl(router.headWithRegex(regex));
+	public RestRoute head(String path) {
+		RestRoute route = new RestRouteImpl(router.head(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl options() {
-		return new RestRouteImpl(router.options());
+	public RestRoute headWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.headWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl options(String path) {
-		return new RestRouteImpl(router.options(path));
+	public RestRoute options() {
+		RestRoute route = new RestRouteImpl(router.options(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl optionsWithRegex(String regex) {
-		return new RestRouteImpl(router.optionsWithRegex(regex));
+	public RestRoute options(String path) {
+		RestRoute route = new RestRouteImpl(router.options(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl put() {
-		return new RestRouteImpl(router.put());
+	public RestRoute optionsWithRegex(String regex) {
+		RestRouteImpl route = new RestRouteImpl(router.optionsWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl put(String path) {
-		return new RestRouteImpl(router.put(path));
+	public RestRoute put() {
+		RestRoute route = new RestRouteImpl(router.put(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl putWithRegex(String regex) {
-		return new RestRouteImpl(router.putWithRegex(regex));
+	public RestRoute put(String path) {
+		RestRoute route = new RestRouteImpl(router.put(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl post() {
-		return new RestRouteImpl(router.post());
+	public RestRoute putWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.putWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl post(String path) {
-		return new RestRouteImpl(router.post(path));
+	public RestRoute post() {
+		RestRoute route = new RestRouteImpl(router.post(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl postWithRegex(String regex) {
-		return new RestRouteImpl(router.postWithRegex(regex));
+	public RestRoute post(String path) {
+		RestRoute route = new RestRouteImpl(router.post(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl delete() {
-		return new RestRouteImpl(router.delete());
+	public RestRoute postWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.postWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl delete(String path) {
-		return new RestRouteImpl(router.delete(path));
+	public RestRoute delete() {
+		RestRoute route = new RestRouteImpl(router.delete(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl deleteWithRegex(String regex) {
-		return new RestRouteImpl(router.deleteWithRegex(regex));
+	public RestRoute delete(String path) {
+		RestRoute route = new RestRouteImpl(router.delete(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl trace() {
-		return new RestRouteImpl(router.trace());
+	public RestRoute deleteWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.deleteWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl trace(String path) {
-		return new RestRouteImpl(router.trace(path));
+	public RestRoute trace() {
+		RestRoute route = new RestRouteImpl(router.trace(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl traceWithRegex(String regex) {
-		return new RestRouteImpl(router.traceWithRegex(regex));
+	public RestRoute trace(String path) {
+		RestRoute route = new RestRouteImpl(router.trace(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl connect() {
-		return new RestRouteImpl(router.connect());
+	public RestRoute traceWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.traceWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl connect(String path) {
-		return new RestRouteImpl(router.connect(path));
+	public RestRoute connect() {
+		RestRoute route = new RestRouteImpl(router.connect(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl connectWithRegex(String regex) {
-		return new RestRouteImpl(router.connectWithRegex(regex));
+	public RestRoute connect(String path) {
+		RestRoute route = new RestRouteImpl(router.connect(path), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl patch() {
-		return new RestRouteImpl(router.patch());
+	public RestRoute connectWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.connectWithRegex(regex), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl patch(String path) {
-		return new RestRouteImpl(router.patch(path));
+	public RestRoute patch() {
+		RestRoute route = new RestRouteImpl(router.patch(), this);
+		routes.add(route);
+		return route;
 	}
 
 	@Override
-	public RestRouteImpl patchWithRegex(String regex) {
-		return new RestRouteImpl(router.patchWithRegex(regex));
+	public RestRoute patch(String path) {
+		RestRoute route = new RestRouteImpl(router.patch(path), this);
+		routes.add(route);
+		return route;
 	}
 
+	@Override
+	public RestRoute patchWithRegex(String regex) {
+		RestRoute route = new RestRouteImpl(router.patchWithRegex(regex), this);
+		routes.add(route);
+		return route;
+	}
+
+	/**
+	 * @deprecated Use {@link #getRestRoutes()} instead.
+	 */
 	@Override
 	public List<Route> getRoutes() {
-		return router.getRoutes().stream().map(route -> new RestRouteImpl(route)).collect(Collectors.toList());
+		return router.getRoutes().stream().map(route -> new RestRouteImpl(route, this)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<RestRoute> getRestRoutes() {
-		// return router.getRoutes().stream().map(route -> new RestRouteImpl(route)).collect(Collectors.toList());#
+		// return router.getRoutes().stream().map(route -> new RestRouteImpl(route, this)).collect(Collectors.toList());
 		return new ArrayList<>(routes);
 	}
 
 	@Override
-	public RestRouterImpl clear() {
+	public RestRouter clear() {
 		router.clear();
+		routes.clear();
 		return this;
 	}
 
 	@Override
-	public RestRouterImpl mountSubRouter(String mountPoint, Router subRouter) {
+	public RestRouter mountSubRouter(String mountPoint, Router subRouter) {
 		router.mountSubRouter(mountPoint, subRouter);
 		return this;
 	}
@@ -235,7 +302,7 @@ public class RestRouterImpl implements RestRouter {
 	}
 
 	@Override
-	public RestRouterImpl exceptionHandler(Handler<Throwable> exceptionHandler) {
+	public RestRouter exceptionHandler(Handler<Throwable> exceptionHandler) {
 		router.exceptionHandler(exceptionHandler);
 		return this;
 	}

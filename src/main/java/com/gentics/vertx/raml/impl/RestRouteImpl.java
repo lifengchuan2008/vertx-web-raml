@@ -18,13 +18,13 @@ import org.raml.model.parameter.UriParameter;
 
 import com.gentics.vertx.raml.ParameterProvider;
 import com.gentics.vertx.raml.RestRoute;
+import com.gentics.vertx.raml.RestRouter;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Route;
-import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
 /**
@@ -43,6 +43,8 @@ public class RestRouteImpl implements RestRoute {
 	 */
 	private Route route;
 
+	private RestRouter restRouter;
+
 	private String displayName;
 
 	private String description;
@@ -58,7 +60,7 @@ public class RestRouteImpl implements RestRoute {
 
 	private Object exampleRequest = null;
 
-	private String pathRegex;
+//	private String pathRegex;
 
 	private HttpMethod method;
 
@@ -70,14 +72,25 @@ public class RestRouteImpl implements RestRoute {
 
 	private Map<String, QueryParameter> parameters = new HashMap<>();
 
+	// /**
+	// * Create a new rest route by wrapping the provided route.
+	// *
+	// * @param route
+	// * Vert.x route
+	// */
+	// public RestRouteImpl(Route route) {
+	// this.route = route;
+	// }
+
 	/**
 	 * Create a new rest route by wrapping the provided route.
 	 * 
 	 * @param route
-	 *            Vert.x route
+	 * @param restRouter
 	 */
-	public RestRouteImpl(Route route) {
+	public RestRouteImpl(Route route, RestRouterImpl restRouter) {
 		this.route = route;
+		this.restRouter = restRouter;
 	}
 
 	@Override
@@ -99,7 +112,7 @@ public class RestRouteImpl implements RestRoute {
 
 	@Override
 	public RestRoute pathRegex(String path) {
-		this.pathRegex = path;
+//		this.pathRegex = path;
 		route.pathRegex(path);
 		return this;
 	}
@@ -242,7 +255,7 @@ public class RestRouteImpl implements RestRoute {
 	}
 
 	@Override
-	public String[] getTraits() {
+	public String[] traits() {
 		return traits;
 	}
 
@@ -258,7 +271,7 @@ public class RestRouteImpl implements RestRoute {
 
 	@Override
 	public String pathRegex() {
-		return pathRegex;
+		return route.pathRegex();
 	}
 
 	@Override
@@ -272,7 +285,7 @@ public class RestRouteImpl implements RestRoute {
 	}
 
 	@Override
-	public void queryParameters(Class<? extends ParameterProvider> clazz) {
+	public RestRoute queryParameters(Class<? extends ParameterProvider> clazz) {
 		try {
 			ParameterProvider provider = clazz.newInstance();
 			parameters.putAll(provider.getRAMLParameters());
@@ -280,6 +293,7 @@ public class RestRouteImpl implements RestRoute {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return this;
 	}
 
 	@Override
@@ -303,7 +317,7 @@ public class RestRouteImpl implements RestRoute {
 	}
 
 	@Override
-	public void validate() {
+	public RestRoute validate() {
 		if (!produces.isEmpty() && exampleResponses.isEmpty()) {
 			log.error("Endpoint {" + ramlPath() + "} has no example response.");
 			throw new RuntimeException("Endpoint {" + ramlPath() + "} has no example responses.");
@@ -324,6 +338,7 @@ public class RestRouteImpl implements RestRoute {
 				throw new RuntimeException("Missing URI description for path {" + ramlPath() + "} segment {" + segment + "}");
 			}
 		}
+		return this;
 	}
 
 	/**
@@ -357,8 +372,8 @@ public class RestRouteImpl implements RestRoute {
 	}
 
 	@Override
-	public Router router() {
-		return route.router();
+	public RestRouter router() {
+		return restRouter;
 	}
 
 }

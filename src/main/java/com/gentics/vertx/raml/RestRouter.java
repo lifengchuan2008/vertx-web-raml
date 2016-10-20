@@ -9,6 +9,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 
+/**
+ * Extended {@link Router} which provides additional methods to describe a REST API in order to generate documentation for the API.
+ */
 public interface RestRouter extends Router {
 
 	static RestRouter router(Vertx vertx) {
@@ -111,13 +114,6 @@ public interface RestRouter extends Router {
 	@Override
 	RestRoute patchWithRegex(String regex);
 
-	/**
-	 * Return the list of rest routes that have been registered on this router.
-	 * 
-	 * @return
-	 */
-	List<RestRoute> getRestRoutes();
-
 	@Override
 	RestRouter clear();
 
@@ -127,24 +123,86 @@ public interface RestRouter extends Router {
 	@Override
 	RestRouter exceptionHandler(Handler<Throwable> exceptionHandler);
 
+	/**
+	 * Return the list of rest routes that have been registered on this router.
+	 * 
+	 * @return
+	 */
+	List<RestRoute> getRestRoutes();
+
+	/**
+	 * Return the title of the API.
+	 * 
+	 * @return
+	 */
 	String title();
 
+	/**
+	 * Set the title of the API.
+	 * 
+	 * @param title
+	 * @return
+	 */
 	RestRouter title(String title);
 
+	/**
+	 * Return the version of your API.
+	 * 
+	 * @return
+	 */
 	String version();
 
+	/**
+	 * Set the version of the API.
+	 * 
+	 * @param version
+	 * @return
+	 */
 	RestRouter version(String version);
 
+	/**
+	 * Return the baseUri of the API.
+	 * 
+	 * @return
+	 */
 	String baseUri();
 
+	/**
+	 * Set the baseUri of the API.
+	 * 
+	 * @param uri
+	 * @return
+	 */
 	RestRouter baseUri(String uri);
 
+	/**
+	 * Return the protocols supported by the API.
+	 * 
+	 * @return
+	 */
 	String[] protocols();
 
+	/**
+	 * Set the protocols that are supported by the API.
+	 * 
+	 * @param protocols
+	 * @return
+	 */
 	RestRouter protocols(String... protocols);
 
+	/**
+	 * Return the description of the API
+	 * 
+	 * @return
+	 */
 	String description();
 
+	/**
+	 * Set the description of the API.
+	 * 
+	 * @param description
+	 * @return
+	 */
 	RestRouter description(String description);
 
 }

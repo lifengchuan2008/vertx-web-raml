@@ -57,7 +57,7 @@ public class RAMLGenerator {
 
 			String fullPath = "/" + route.ramlPath();
 			Action action = new Action();
-			action.setIs(Arrays.asList(route.getTraits()));
+			action.setIs(Arrays.asList(route.traits()));
 			action.setDisplayName(route.displayName());
 			action.setDescription(route.description());
 			action.setQueryParameters(route.queryParameters());

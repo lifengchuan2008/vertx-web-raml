@@ -18,9 +18,14 @@ The following endpoint/route:
         });
 ```
 
-is transformed into:
+is transformed via:
 
 ```
+    restRouter.route().path("/raml").description("RAML serving endpoint").method(GET).handler(RamlHandler.create(restRouter));
+```
+
+into:
+
 #%RAML 0.8
 title: Dummy REST API
 version: "1"
